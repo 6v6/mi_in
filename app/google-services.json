@@ -1,31 +1,31 @@
 {
   "project_info": {
-    "project_number": "323207037754",
-    "firebase_url": "https://homeproject-3e3b1.firebaseio.com",
-    "project_id": "homeproject-3e3b1",
-    "storage_bucket": "homeproject-3e3b1.appspot.com"
+    "project_number": "141539012840",
+    "firebase_url": "https://miin-2a596.firebaseio.com",
+    "project_id": "miin-2a596",
+    "storage_bucket": "miin-2a596.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:323207037754:android:41cbc9f1ec6769e8",
+        "mobilesdk_app_id": "1:141539012840:android:41cbc9f1ec6769e8",
         "android_client_info": {
           "package_name": "com.example.ds.homeproject"
         }
       },
       "oauth_client": [
         {
-          "client_id": "323207037754-burktsmhptnd9q9a0nth8l4s6qt6neub.apps.googleusercontent.com",
+          "client_id": "141539012840-0p9qt3qntjdrv57h5r1kcpssltroistv.apps.googleusercontent.com",
           "client_type": 3
         },
         {
-          "client_id": "323207037754-burktsmhptnd9q9a0nth8l4s6qt6neub.apps.googleusercontent.com",
+          "client_id": "141539012840-0p9qt3qntjdrv57h5r1kcpssltroistv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBR_7iZN5W0fA8ibVvWARhNQ2HvJNGSkDo"
+          "current_key": "AIzaSyBsxfD_RBVU2dYQbZD7KtYZk2FMzlMKt9E"
         }
       ],
       "services": {
