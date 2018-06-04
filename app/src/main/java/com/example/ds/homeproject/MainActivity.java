@@ -39,19 +39,16 @@ public class MainActivity extends AppCompatActivity {
         pw=(EditText)findViewById(R.id.pw);
     }
 
-
     private void createUser(String id,String password){
         mAuth.signInWithEmailAndPassword(id, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                       EditText id=(EditText)findViewById(R.id.id);
+
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                           Toast.makeText(MainActivity.this,id.getText().toString(),Toast.LENGTH_LONG).show();
+                           Toast.makeText(MainActivity.this,"성공",Toast.LENGTH_LONG).show();
                             FirebaseUser user = mAuth.getCurrentUser();
-
-
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(MainActivity.this,"실패",Toast.LENGTH_LONG).show();
@@ -64,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     //로그인
     public void login(View view) {
-        createUser(id.getText().toString(),pw.getText().toString());
+     createUser(id.getText().toString(),pw.getText().toString());
       Intent intent = new Intent(getApplication(), HomeActivity.class);
       startActivity(intent);
     }
