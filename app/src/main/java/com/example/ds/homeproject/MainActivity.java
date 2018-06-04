@@ -14,10 +14,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import android.text.TextUtils;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.view.Window;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,12 +48,11 @@ public class MainActivity extends AppCompatActivity {
         pw=(EditText)findViewById(R.id.pw);
     }
 
-    private void createUser(String id,String password){
+/*    private void checkUser(String id,String password){
         mAuth.signInWithEmailAndPassword(id, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                            Toast.makeText(MainActivity.this,"성공",Toast.LENGTH_LONG).show();
@@ -57,13 +65,40 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-    }
+    }*/
 
+    public void getFirebaseDatabase() {
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("getFirebaseDatabase", "key: " + dataSnapshot.getChildrenCount());
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    String key = postSnapshot.getKey();
+                    FirebasePost get = postSnapshot.getValue(FirebasePost.class);
+
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("getFirebaseDatabase", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        Query sortbyId = FirebaseDatabase.getInstance().getReference().child("id_list").orderByChild("id");
+        sortbyId.addListenerForSingleValueEvent(postListener);
+        if(sortbyId.getRef().child(id.getText().toString())==null){
+            Toast.makeText(this,"id를 확인해주세요",Toast.LENGTH_LONG).show();
+        }
+        else if((sortbyId.getRef().child(id.getText().toString())).equals(pw.getText().toString())){
+            Intent intent = new Intent(getApplication(), HomeActivity.class);
+            startActivity(intent);
+        }
+
+    }
     //로그인
     public void login(View view) {
-     createUser(id.getText().toString(),pw.getText().toString());
-      Intent intent = new Intent(getApplication(), HomeActivity.class);
-      startActivity(intent);
+        getFirebaseDatabase();
+        /*Intent intent = new Intent(getApplication(), HomeActivity.class);
+        startActivity(intent);*/
     }
 
     //회원가입
@@ -71,5 +106,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplication(), JoinActivity.class);
         startActivity(intent);
     }
+
 
 }

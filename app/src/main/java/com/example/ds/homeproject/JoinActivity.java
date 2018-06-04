@@ -17,15 +17,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class JoinActivity extends AppCompatActivity {
 
-    /*private FirebaseDatabase Database = FirebaseDatabase.getInstance();
-    private DatabaseReference databaseReference = Database.getReference();*/
+    private FirebaseDatabase Database = FirebaseDatabase.getInstance();
+    private DatabaseReference mPostReference = Database.getReference();
 
     String[] items = { "엄마", "아빠", "아들", "딸",};
     Button finish;
 
-    EditText nm, id, pw, email,familyCode;
+    EditText name, id, pw, email,familyCode;
     String role;
     boolean tableCreated;
     @Override
@@ -35,7 +41,7 @@ public class JoinActivity extends AppCompatActivity {
         setTitle("회원가입");
 
         tableCreated = false;
-        nm = (EditText)(findViewById(R.id.name));
+        name = (EditText)(findViewById(R.id.name));
         id = (EditText)(findViewById(R.id.id));
         pw = (EditText)(findViewById(R.id.pw));
         email = (EditText)(findViewById(R.id.email));
@@ -62,11 +68,24 @@ public class JoinActivity extends AppCompatActivity {
         finish.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
+                postFirebaseDatabase(true);
                 finish();
             }
          }
         );
+    }
+
+    public void postFirebaseDatabase(boolean add){
+        mPostReference = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> childUpdates = new HashMap<>();
+        Map<String, Object> postValues = null;
+        if(add){
+            FirebasePost post = new FirebasePost(name.getText().toString(),id.getText().toString(), pw.getText().toString(),
+                    email.getText().toString(),familyCode.getText().toString(),role);
+            postValues = post.toMap();
+        }
+        childUpdates.put("/id_list/" + id.getText().toString(), postValues);
+        mPostReference.updateChildren(childUpdates);
     }
 
 
