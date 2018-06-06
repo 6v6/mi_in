@@ -3,11 +3,9 @@ import android.graphics.Bitmap;
 
 public class singerItem {
     private Bitmap image;
-    private String title;
 
-    public singerItem(String title, Bitmap image) {
+    public singerItem(Bitmap image) {
         super();
-        this.title = title;
         this.image = image;
     }
 
@@ -19,11 +17,4 @@ public class singerItem {
         this.image = image;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }

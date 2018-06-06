@@ -1,19 +1,24 @@
 package com.example.ds.homeproject;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +31,18 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
 import java.util.ArrayList;
 
 public class GalFragment extends Fragment {
-    EditText editText;
+
     GridView gridView;
     Button photo;
     SingerAdapter adapter;
@@ -38,6 +51,8 @@ public class GalFragment extends Fragment {
     private static final String TAG = "Test";
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
+    private FirebaseAuth auth;
+    private FirebaseStorage storage;
 
     ImageView image;
    private AlertDialog dialog;
@@ -48,23 +63,28 @@ public class GalFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        //권한
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},0);
+        }
+
+
         rootView = (ViewGroup)inflater.inflate(R.layout.fragment_gal,container,false);
         gridView = (GridView) rootView.findViewById(R.id.gridView);
         photo = (Button)rootView.findViewById(R.id.photoSel);
         adapter = new SingerAdapter();
 
         bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.singer);
-        adapter.addItem(new singerItem("소녀시대", bitmap));
+        adapter.addItem(new singerItem(bitmap));
         gridView.setAdapter(adapter);
-        editText = (EditText) rootView.findViewById(R.id.editText);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 singerItem item = (singerItem) adapter.getItem(position);
-                Toast.makeText(getActivity(), "선택 : " + item.getTitle(), Toast.LENGTH_LONG).show();
                 //확대 보기
                 resizeImage(item);
 
@@ -85,7 +105,6 @@ public class GalFragment extends Fragment {
     public void resizeImage(singerItem item){
 
         Intent intent = new Intent(getActivity(), details.class);
-        intent.putExtra("title", item.getTitle());
         intent.putExtra("image", item.getImage());
         startActivity(intent);
     }
@@ -113,6 +132,9 @@ public class GalFragment extends Fragment {
         ab.setView(innerView);
 
         return ab.create();
+
+
+
     }
 
     // 다이얼로그 종료
@@ -124,8 +146,10 @@ public class GalFragment extends Fragment {
 
     // 카메라 호출 하기
     private void takePicture() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, PICK_FROM_CAMERA);
+      /*  Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, PICK_FROM_CAMERA);*/
+
+
     }
 
     //앨범 호출 하기
@@ -134,36 +158,76 @@ public class GalFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_FROM_ALBUM);
+      /*  Intent intent=new Intent(Intent.ACTION_PICK);
+        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        startActivityForResult(intent,PICK_FROM_ALBUM);*/
+
     }
 
     //사진 선택 후 저장
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String title = editText.getText().toString();
         image = (ImageView) rootView.findViewById(R.id.img);
         GridView gridView2;
         gridView2 = (GridView) rootView.findViewById(R.id.gridView);
+
+
+
         try {
-            //이미지를 하나 골랐을때 ***resultok 대신에 -1
+
             if (requestCode == PICK_FROM_ALBUM && resultCode == -1 && null != data) {
+
                 //data에서 절대경로로 이미지를 가져옴
+
                 Uri uri = data.getData();
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+
                 //이미지가 크면 불러 오지 못하므로 사이즈를 줄여 준다.
                 int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
                 Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
+
                 image.setImageBitmap(scaled);
-                adapter.addItem(new singerItem(title, scaled));
+                adapter.addItem(new singerItem(scaled));
                 adapter.notifyDataSetChanged();
+
+
                 gridView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         singerItem item = (singerItem) adapter.getItem(position);
-                        Toast.makeText(getActivity(), "선택 : " + item.getTitle(), Toast.LENGTH_LONG).show();
                         //확대 보기
-                       // resizeImage(item);
+                        // resizeImage(item);
                     }
                 });
+
+
+
+                //데베 저장소
+                storage=FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference("gs://miin-2a596.appspot.com");
+
+                Uri file=Uri.fromFile(new File(getPath(data.getData())));
+                Log.d(TAG, "ALBUM:" + data.getData().getPath());
+                Log.d(TAG, "ALBUM:" + data.getData());
+                StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
+                UploadTask uploadTask = riversRef.putFile(file);
+
+
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                        // ...
+                    }
+                });
+
 
 
             }
@@ -171,6 +235,21 @@ public class GalFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
+    //getPath
+    public String getPath(Uri uri){
+        String [] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader cursorLoader = new CursorLoader(getContext(),uri,proj,null,null,null);
+
+        Cursor cursor = cursorLoader.loadInBackground ();
+        int index = cursor.getColumnIndexOrThrow (MediaStore.Images.Media.DATA);
+
+        cursor.moveToFirst();
+
+        return cursor.getString(index);
+    }
+
+
     class SingerAdapter extends BaseAdapter {
 
         ArrayList<singerItem> items = new ArrayList<singerItem>();
@@ -198,7 +277,6 @@ public class GalFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup viewGroup) {
             SingerItemView view = new SingerItemView(getActivity());
             singerItem item = items.get(position);
-            view.setTitle(item.getTitle());
             view.setImage(item.getImage());
 
        /*     int numColumns = gridView.getNumColumns();

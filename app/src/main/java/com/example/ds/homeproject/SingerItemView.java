@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 
 public class SingerItemView extends LinearLayout {
-    TextView textView;
+
     ImageView imageView;
 
 
@@ -36,15 +36,9 @@ public class SingerItemView extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.activity_singer_item, this, true);
         imageView = (ImageView) findViewById(R.id.img);
-        textView = (TextView) findViewById(R.id.textView);
+
 
     }
-
-
-    public void setTitle(String title) {
-        textView.setText(title);
-    }
-
 
     public void setImage(Bitmap bitmap) { imageView.setImageBitmap(bitmap);}
 }

@@ -7,7 +7,6 @@
     tools:context="com.example.ds.homeproject.MainActivity"
     android:background="@color/colorAccent"
     >
-    >
 
     <LinearLayout
         android:layout_width="match_parent"
