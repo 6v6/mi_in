@@ -8,19 +8,17 @@ import java.util.Map;
 
 @IgnoreExtraProperties
 public class FirebasePost {
-    public String id;
     public String name;
     public String pw;
     public String email;
     public String code;
     public String role;
-
+    public String date, schedule;
     public FirebasePost(){
         // Default constructor required for calls to DataSnapshot.getValue(FirebasePost.class)
     }
 
-    public FirebasePost(String name, String id, String pw, String email, String code, String role) {
-        this.id = id;
+    public FirebasePost(String name, String pw, String email, String code, String role) {
         this.name = name;
         this.pw = pw;
         this.code = code;
@@ -28,15 +26,27 @@ public class FirebasePost {
         this.role = role;
     }
 
+    public FirebasePost(String date, String schedule){
+        this.date = date;
+        this.schedule = schedule;
+    }
+
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("id", id);
         result.put("name", name);
         result.put("pw", pw);
         result.put("email", email);
         result.put("code", code);
         result.put("role", role);
         return result;
+    }
+
+    @Exclude
+    public Map<String, Object> toDate() {
+        HashMap<String, Object> date = new HashMap<>();
+        date.put("date", date);
+        date.put("schedule", schedule);
+        return date;
     }
 }

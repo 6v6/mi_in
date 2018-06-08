@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-
         edEmail = (EditText) findViewById(R.id.id);
         edPw = (EditText) findViewById(R.id.pw);
 
@@ -126,9 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isValidEmail(id) && isValidPasswd(pw)) {
             signinAccount(id, pw);
-
         } else {
-
             Toast.makeText(MainActivity.this, "이메일과 비밀번호를 입력하세요!", Toast.LENGTH_LONG).show();
         }
     }
@@ -140,34 +137,61 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //맞는지 확인
+    //비밀번호 4자리 이상 및 비밀번호 맞는지 확인
     private boolean isValidPasswd(String pw) {
+
+        //레퍼런스 정보 가져오기
+        myRef = Database.getReference("id_list");
+        myRef.child("g05050").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                password = dataSnapshot.child("pw").getValue(String.class);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
         if(pw == null || TextUtils.isEmpty(pw)){
 
             return false;
         } else {
             if(pw.length() > 4&&pw.equals(password)) {
-                Log.d(TAG, "EmailPassword:" + password);
+
                 return true;
             }
             else
                 return false;
         }
     }
+
+    //이메일 맞는지 확인
     private boolean isValidEmail(String id){
+
+        //레퍼런스 정보 가져오기
+        myRef = Database.getReference("id_list");
+        myRef.child("g05050").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                email = dataSnapshot.child("email").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         if(id == null || TextUtils.isEmpty(id)){
 
             return false;
         } else {
             if(id.equals(email)) {
-                Log.d(TAG, "EMAILid:" + email);
                 return true;
             }
             else
-               return Patterns.EMAIL_ADDRESS.matcher(id).matches();
+                return Patterns.EMAIL_ADDRESS.matcher(id).matches();
         }
     }
-
 
 
     //홈 화면
@@ -175,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
          Intent intent = new Intent(getApplication(), HomeActivity.class);
          startActivity(intent);
      }
-
 
  }
 

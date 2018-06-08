@@ -29,13 +29,13 @@ public class JoinActivity extends AppCompatActivity {
 
     public static final String TAG ="JoinActivity";
     private FirebaseDatabase Database = FirebaseDatabase.getInstance();
-    private DatabaseReference mPostReference = Database.getReference();
+    private DatabaseReference mPostReference = Database.getReference("id_list");
     private FirebaseAuth mAuth;
 
     String[] items = { "엄마", "아빠", "아들", "딸",};
     Button finish;
 
-    EditText name, id, edPw, edEmail,familyCode;
+    EditText name, edPw, edEmail,familyCode;
     String role;
     boolean tableCreated;
     @Override
@@ -46,7 +46,6 @@ public class JoinActivity extends AppCompatActivity {
 
         tableCreated = false;
         name = (EditText)(findViewById(R.id.name));
-        id = (EditText)(findViewById(R.id.id));
         edPw = (EditText)(findViewById(R.id.pw));
         edEmail = (EditText)(findViewById(R.id.email));
         familyCode = (EditText)(findViewById(R.id.familyCode));
@@ -82,15 +81,15 @@ public class JoinActivity extends AppCompatActivity {
     }
 
     public void postFirebaseDatabase(boolean add){
-        mPostReference = FirebaseDatabase.getInstance().getReference();
         Map<String, Object> childUpdates = new HashMap<>();
         Map<String, Object> postValues = null;
         if(add){
-            FirebasePost post = new FirebasePost(name.getText().toString(),id.getText().toString(), edPw.getText().toString(),
+            FirebasePost post = new FirebasePost(name.getText().toString(), edPw.getText().toString(),
                     edEmail.getText().toString(),familyCode.getText().toString(),role);
             postValues = post.toMap();
         }
-        childUpdates.put("/id_list/" + id.getText().toString(), postValues);
+        String id = edEmail.getText().toString();
+        childUpdates.put(id.substring(0,id.indexOf("@")), postValues);
         mPostReference.updateChildren(childUpdates);
     }
 

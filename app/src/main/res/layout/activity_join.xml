@@ -33,28 +33,20 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/id"
-            android:layout_width="330dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="아이디"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/pw"
-            android:layout_width="330dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="비밀번호"
-            android:inputType="textPassword" />
-
-        <EditText
             android:id="@+id/email"
             android:layout_width="330dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="이메일"
             android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/pw"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="비밀번호(4자리이상)"
+            android:inputType="textPassword" />
 
         <EditText
             android:id="@+id/familyCode"

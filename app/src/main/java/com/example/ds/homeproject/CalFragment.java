@@ -16,6 +16,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class CalFragment extends Fragment {
     int numButton=0;
     CalendarView cal;
@@ -24,8 +30,10 @@ public class CalFragment extends Fragment {
     TextView textView2;
     String date ;
     LinearLayout dynamicArea;
-
+    private FirebaseDatabase Database = FirebaseDatabase.getInstance();
+    private DatabaseReference mPostReference =  Database.getReference("schedule_list");
     private final int DYNAMIC_VIEW_ID =0x8000;
+    String schedule;
 
     public CalFragment() {
         // Required empty public constructor
@@ -46,25 +54,36 @@ public class CalFragment extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String text =edit.getText().toString();
-                numButton++;
+                schedule =edit.getText().toString();
+                postFirebaseDatabase(true);
+              /*  numButton++;
                 TextView textview3= new TextView(getActivity());
                 textview3.setId(DYNAMIC_VIEW_ID+numButton);
                 textview3.setText(date+" "+text+"예약됨");
                 dynamicArea.addView(textview3,new LinearLayout.LayoutParams(WindowManager.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                // textView2.setText(date+" "+text +"예약됨");
+                // textView2.setText(date+" "+text +"예약됨");*/
             }
         });
         cal.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                date =year+"년"+(month+1)+"월"+dayOfMonth+"일"; // date에 선택된 날짜가 저장됨
+                date =year+"/"+(month+1)+"/"+dayOfMonth; // date에 선택된 날짜가 저장됨
+               // postFirebaseDatabase(year,month,dayOfMonth);
             }
         });
         return rootView;
     }
 
-
+    public void postFirebaseDatabase(boolean add){
+        Map<String, Object> childUpdates = new HashMap<>();
+        Map<String, Object> postValues = null;
+        if(add){
+            FirebasePost post = new FirebasePost(date, schedule);
+            postValues = post.toDate();
+        }
+        childUpdates.put(date, postValues);
+        mPostReference.updateChildren(childUpdates);
+    }
 
 
 

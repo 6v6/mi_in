@@ -55,8 +55,9 @@ public class HomeActivity extends FragmentActivity  {
     Animation translationRightAnim;
 
     private FirebaseAuth auth;
-    private DatabaseReference myRef;
     private FirebaseDatabase Database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef = Database.getReference("id_list");
+
 
     private ImageView imageView;
    // private NavigationView page;
@@ -65,16 +66,14 @@ public class HomeActivity extends FragmentActivity  {
     private TextView textEmail;
     private TextView textName;
     private TextView textfamCode;
-    private TextView textID;
     private TextView textRole;
+    private BitmapDrawable mom,dad,girl,boy;
 
-
+    String email;
     String name;
     String role;
-    String id;
     String familyCode;
-    String email;
-    String loginId;
+    String user;
 
     TabListener tl = new TabListener();
     BottomBar bottomBar;
@@ -83,7 +82,6 @@ public class HomeActivity extends FragmentActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         calFragment = new CalFragment();
         homeFragment = new HomeFragment();
         galFragment = new GalFragment();
@@ -113,16 +111,11 @@ public class HomeActivity extends FragmentActivity  {
         translationLeftAnim.setAnimationListener(al);
         translationRightAnim.setAnimationListener(al);
 
+        mom=(BitmapDrawable)getResources().getDrawable(R.drawable.mom);
+        dad=(BitmapDrawable)getResources().getDrawable(R.drawable.dad);
+        girl=(BitmapDrawable)getResources().getDrawable(R.drawable.girl);
+        boy=(BitmapDrawable)getResources().getDrawable(R.drawable.boy);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog = imageDialog();
-                dialog.show();
-
-            }
-        });
 
         //bottom바 액션 설정
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
@@ -130,33 +123,22 @@ public class HomeActivity extends FragmentActivity  {
 
         //로그인한 이메일 주소 가져오기
         auth=FirebaseAuth.getInstance();
-        String user= auth.getCurrentUser().getUid();
+        user= auth.getCurrentUser().getEmail();
 
-        //로그인한 레퍼런스 아이디 가져오기
-        myRef = Database.getReference("id_list");
-        myRef.child("last").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                loginId = dataSnapshot.child("id").getValue(String.class);
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
 
 
         //레퍼런스 정보 가져오기
-        myRef=Database.getReference("id_list");
-        myRef.child("last").addListenerForSingleValueEvent(new ValueEventListener() {
+        String id = user.substring(0,user.indexOf("@"));
+        myRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             //for (DataSnapshot datas : dataSnapshot.getChildren()) {} 반복문
             email=dataSnapshot.child("email").getValue(String.class);
             name=dataSnapshot.child("name").getValue(String.class);
-            id=dataSnapshot.child("id").getValue(String.class);
             familyCode=dataSnapshot.child("code").getValue(String.class);
             role=dataSnapshot.child("role").getValue(String.class);
+
+
 
            /* page=(NavigationView)findViewById(R.id.page);
             View view=page.getHeaderView(0);
@@ -166,16 +148,22 @@ public class HomeActivity extends FragmentActivity  {
 
             textName=(TextView)findViewById(R.id.name);
             textEmail=(TextView)findViewById(R.id.email);
-            textID=(TextView)findViewById(R.id.id);
             textfamCode=(TextView)findViewById(R.id.famcode);
             textRole=(TextView)findViewById(R.id.role);
 
 
             textEmail.setText(email);
             textName.setText(name);
-            textID.setText(id);
             textfamCode.setText(familyCode);
             textRole.setText(role);
+            if(role.equals("엄마"))
+                imageView.setImageDrawable(mom);
+            else if(role.equals("아빠"))
+                imageView.setImageDrawable(dad);
+            else if(role.equals("딸"))
+                imageView.setImageDrawable(girl);
+            else if(role.equals("아들"))
+                imageView.setImageDrawable(boy);
         }
 
         @Override
@@ -186,63 +174,6 @@ public class HomeActivity extends FragmentActivity  {
 
 }
 
-
-    private AlertDialog imageDialog() {
-        final View innerView = getLayoutInflater().inflate(R.layout.menu_dialog, null);
-
-    /*    page=(NavigationView)findViewById(R.id.page);
-        View view=page.getHeaderView(0);
-        imageView=(ImageView)view.findViewById(R.id.pro);*/
-
-        ImageView img=(ImageView)innerView.findViewById(R.id.mom);
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BitmapDrawable bitmap=(BitmapDrawable)getResources().getDrawable(R.drawable.mom);
-                imageView.setImageDrawable(bitmap);
-                setDismiss(dialog);
-            }
-        });
-        ImageView img2=(ImageView)innerView.findViewById(R.id.dad);
-        img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BitmapDrawable bitmap2=(BitmapDrawable)getResources().getDrawable(R.drawable.dad);
-                imageView.setImageDrawable(bitmap2);
-                setDismiss(dialog);
-            }
-        });
-        ImageView img3=(ImageView)innerView.findViewById(R.id.girl);
-        img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BitmapDrawable bitmap3=(BitmapDrawable)getResources().getDrawable(R.drawable.girl);
-                imageView.setImageDrawable(bitmap3);
-                setDismiss(dialog);
-            }
-        });
-        ImageView img4=(ImageView)innerView.findViewById(R.id.boy);
-        img4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BitmapDrawable bitmap4=(BitmapDrawable)getResources().getDrawable(R.drawable.boy);
-                imageView.setImageDrawable(bitmap4);
-                setDismiss(dialog);
-            }
-        });
-        AlertDialog.Builder ab = new AlertDialog.Builder(this);
-        ab.setTitle("프로필 설정");
-
-        ab.setView(innerView);
-
-        return ab.create();
-    }
-
-    private void setDismiss(AlertDialog dialog) {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-        }
-    }
 
     public void onLogOut(View view) {
         auth.signOut();
