@@ -48,58 +48,54 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_gravity="right"
-        android:background="@drawable/layout_border"
+        android:background="#FFFFFF"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="invisible">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:text="내 정보"
-            android:textColor="#60c5ba"
-            android:textSize="25dp"
-            android:textStyle="bold" />
+
 
         <LinearLayout
-            android:layout_width="209dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp">
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="center_vertical"
+            android:background="@color/colorPrimary"
+          >
 
             <ImageView
                 android:id="@+id/pro"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/girl" />
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/girl"
+                />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="11dp"
-                    android:text="이름" />
+                    android:text="이름"
+                    android:textSize="16dp"
+                    android:textColor="#FFFFFF" />
 
                 <TextView
                     android:id="@+id/role"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="11dp"
-                    android:text="딸" />
+                    android:text="딸"
+                    android:textSize="16dp"
+                    android:textColor="#FFFFFF" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
             android:orientation="vertical">
 
@@ -114,46 +110,90 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/tag_pink"/>
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="가족코드 : " />
+                    android:text=" 가족코드 : "
+                    android:textSize="16dp"/>
 
                 <TextView
                     android:id="@+id/famcode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="가족코드" />
+                    android:hint="가족코드"
+                    android:textSize="16dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:orientation="horizontal">
-
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/tag_pink"/>
                 <TextView
                     android:id="@+id/textView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EMAIL :  " />
+                    android:text=" EMAIL :  "
+                    android:textSize="16dp"/>
 
                 <TextView
                     android:id="@+id/email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="이메일" />
+                    android:hint="이메일"
+                    android:textSize="16dp"/>
 
 
             </LinearLayout>
-            <Button
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/tag_pink"/>
+            <TextView
+                android:id="@+id/version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="version"
+                android:text=" 버전확인"
+                android:textSize="16dp"
+                />
+        </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/tag_pink"/>
+            <TextView
                 android:id="@+id/logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="로그아웃"
-                android:onClick="onLogOut"/>
+                android:onClick="onLogOut"
+                android:text=" 로그아웃"
+                android:textSize="16dp"
+                />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

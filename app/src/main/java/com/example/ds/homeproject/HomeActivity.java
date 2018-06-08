@@ -182,6 +182,10 @@ public class HomeActivity extends FragmentActivity  {
         startActivity(intent);
     }
 
+    public void version(View view) {
+        Toast.makeText(this,"mi_in_5346",Toast.LENGTH_LONG).show();
+    }
+
     /*  @SuppressWarnings("StatementWithEmptyBody")
 
       public boolean onNavigationItemSelected(MenuItem item) {
