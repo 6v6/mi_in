@@ -1,7 +1,5 @@
 package com.example.ds.homeproject;
 
-
-
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
