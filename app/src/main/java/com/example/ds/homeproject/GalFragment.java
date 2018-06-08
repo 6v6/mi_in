@@ -4,30 +4,51 @@ import android.Manifest;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
+
+
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
+
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+
+import android.net.Uri;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GalFragment extends Fragment {
 
@@ -36,12 +57,16 @@ public class GalFragment extends Fragment {
     SingerAdapter adapter;
     Bitmap bitmap;
 
-
-    private static final String TAG = "Test";
+    private static final String TAG = "GalFragment";
     private static final int PICK_FROM_ALBUM = 1;
 
+    private DatabaseReference myImage = FirebaseDatabase.getInstance().getReference("img_list");
     private FirebaseStorage storage;
 
+
+    StorageReference riversRef;
+
+    Uri UriFStorage;
     ImageView image;
     ViewGroup rootView;
 
@@ -60,12 +85,10 @@ public class GalFragment extends Fragment {
 
         rootView = (ViewGroup)inflater.inflate(R.layout.fragment_gal,container,false);
         gridView = (GridView) rootView.findViewById(R.id.gridView);
-
         adapter = new SingerAdapter();
-
-        // adapter.addItem(new singerItem(bitmap));
-        adapter.addItem(new singerItem(bitmap));
         gridView.setAdapter(adapter);
+
+        getImage();
 
         photo = (Button)rootView.findViewById(R.id.photoSel);
         photo.setOnClickListener(new View.OnClickListener() {
@@ -75,17 +98,40 @@ public class GalFragment extends Fragment {
             }}
 
         );
-
         return rootView;
     }
 
-    //확대보기
-    public void resizeImage(singerItem item){
+    //이미지 가져오기
+    public void getImage(){
+        myImage.child("gallery").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot datas : dataSnapshot.getChildren()) {
 
-        Intent intent = new Intent(getActivity(), details.class);
-        intent.putExtra("image", item.getImage());
-        startActivity(intent);
+                    String getUri = datas.getValue().toString();
+                    Log.d(TAG, "ALBUM1:" +getUri+"\n");
+
+                    Glide.with(getActivity()).asBitmap()
+                            .load(getUri)
+                            .into(new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    adapter.addItem(new singerItem(resource));
+                                    adapter.notifyDataSetChanged();
+                                    Log.d(TAG, "비트맵으로 바뀐 이미지:" +resource+"\n");
+
+                                }
+                            });
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
     }
+
 
 
     //앨범 호출 하기
@@ -98,12 +144,13 @@ public class GalFragment extends Fragment {
     //사진 선택 후 저장
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        image = (ImageView) rootView.findViewById(R.id.img);
+
+
 
         GridView gridView2;
         gridView2 = (GridView) rootView.findViewById(R.id.gridView);
 
-        Uri UriFStorage = Uri.fromFile(new File(getPath(data.getData())));
+        UriFStorage = Uri.fromFile(new File(getPath(data.getData())));
 
         try {
             if (requestCode == PICK_FROM_ALBUM && resultCode == -1 && null != data) {
@@ -113,9 +160,9 @@ public class GalFragment extends Fragment {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
 
                 //앨범
-                Log.d(TAG, "ALBUM:" +"들어옴"+"\n");
-                Log.d(TAG, "ALBUM 경로Path : " + uri.getPath()+"\n");
-                Log.d(TAG, "ALBUM 경로Data : " + uri);
+                Log.d(TAG, "ALBUM2:" +"들어옴"+"\n");
+                Log.d(TAG, "ALBUM3 경로Path : " + uri.getPath()+"\n");
+                Log.d(TAG, "ALBUM4 경로Data : " + uri);
 
                 //저장소
                 Log.d(TAG, "저장소 경로 Path : " +UriFStorage+"\n");
@@ -125,28 +172,29 @@ public class GalFragment extends Fragment {
                 int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
                 Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
 
-                image.setImageBitmap(scaled);
                 adapter.addItem(new singerItem(scaled));
                 adapter.notifyDataSetChanged();
-
 
                 gridView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         singerItem item = (singerItem) adapter.getItem(position);
-                        //확대 보기
-                        // resizeImage(item);
+
+
                     }
                 });
 
             }
 
-            //데베 저장소
 
+
+            //데베 저장소
             storage=FirebaseStorage.getInstance();
+
             //나의 데이터베이스 저장소 주소
-            StorageReference storageRef = storage.getReferenceFromUrl("gs://miin-2a596.appspot.com");
-            StorageReference riversRef = storageRef.child("images/"+UriFStorage.getLastPathSegment());
+            StorageReference storageRef= storage.getReferenceFromUrl("gs://miin-2a596.appspot.com");
+            riversRef = storageRef.child("GalleryImages/"+UriFStorage.getLastPathSegment());
+
             UploadTask uploadTask = riversRef.putFile(UriFStorage);
 
 
@@ -162,7 +210,9 @@ public class GalFragment extends Fragment {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                     // ...
-
+                    @SuppressWarnings("VisibleForTests")
+                    Uri downloadUrI=taskSnapshot.getDownloadUrl();
+                    postFirebaseDatabase(downloadUrI.toString());
                 }
             });
 
@@ -179,6 +229,13 @@ public class GalFragment extends Fragment {
         int index = cursor.getColumnIndexOrThrow (MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(index);
+    }
+
+    public void postFirebaseDatabase(String img){
+        String key = myImage.child("gallery").push().getKey();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(  "gallery/" + key, img);
+        myImage.updateChildren(childUpdates);
     }
 
 
@@ -220,4 +277,3 @@ public class GalFragment extends Fragment {
     }
 
 }
-

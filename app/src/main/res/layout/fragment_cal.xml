@@ -34,7 +34,6 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:ems="8"
-                android:hint="6시 가족 회의"
                 android:textSize="20dp" />
 
             <Button
@@ -58,7 +57,9 @@
                     android:id="@+id/result"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="일정이 보이는 곳 " />
+                    android:layout_marginLeft="20dp"
+                    android:text="일정이 보이는 곳 "
+                    android:textSize="18dp"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
