@@ -8,12 +8,23 @@ import java.util.Map;
 
 @IgnoreExtraProperties
 public class FirebasePost {
+
+    //계정
     public String name;
     public String pw;
     public String email;
     public String code;
     public String role;
+
+    //캘린더
     public String date,schedule;
+
+    //이미지
+    public String imageUrl;
+    public String userEmail;
+    public String userName;
+
+
     public FirebasePost(){
         // Default constructor required for calls to DataSnapshot.getValue(FirebasePost.class)
     }
@@ -31,6 +42,10 @@ public class FirebasePost {
         this.schedule = schedule;
     }
 
+    public FirebasePost(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
+
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -41,9 +56,13 @@ public class FirebasePost {
             result.put("code", code);
             result.put("role", role);
         }
-        else{
+        else if(date!=null){
             result.put("date", date);
             result.put("schedule", schedule);
+        }
+
+        else if(imageUrl!=null){
+            result.put("imageUrl", imageUrl);
         }
         return result;
     }

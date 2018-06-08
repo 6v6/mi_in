@@ -5,23 +5,20 @@
     android:layout_height="match_parent"
     tools:context="com.example.ds.homeproject.HomeFragment">
 
-    <ImageButton
+    <Button
         android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
+        android:background="@drawable/camera" />
+
+    <Button
+        android:id="@+id/notice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="#55bfbfbf"
-        android:src="@drawable/selectbg"
-        android:tint="@android:color/darker_gray" />
-
-        <Button
-            android:id="@+id/notice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#55bfbfbf"
-            android:gravity="center"
-            android:text="공지사항을 입력해주세요" />
-
+        android:gravity="center"
+        android:text="공지사항을 입력해주세요" />
 
     <ImageView
         android:id="@+id/imageView"
