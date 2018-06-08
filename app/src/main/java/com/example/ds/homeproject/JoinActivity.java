@@ -74,6 +74,7 @@ public class JoinActivity extends AppCompatActivity {
                 String createPW = edPw.getText().toString().trim();
                 createAccount(createID,createPW);
                 postFirebaseDatabase(true);
+
                 finish();
             }
          }
@@ -83,14 +84,17 @@ public class JoinActivity extends AppCompatActivity {
     public void postFirebaseDatabase(boolean add){
         Map<String, Object> childUpdates = new HashMap<>();
         Map<String, Object> postValues = null;
-        if(add){
-            FirebasePost post = new FirebasePost(name.getText().toString(), edPw.getText().toString(),
-                    edEmail.getText().toString(),familyCode.getText().toString(),role);
-            postValues = post.toMap();
+        if( edEmail.getText().toString().length()>6) {
+            if (add) {
+                FirebasePost post = new FirebasePost(name.getText().toString(), edPw.getText().toString(),
+                        edEmail.getText().toString(), familyCode.getText().toString(), role);
+                postValues = post.toMap();
+            }
+            String id = edEmail.getText().toString();
+            childUpdates.put(id.substring(0, id.indexOf("@")), postValues);
+            mPostReference.updateChildren(childUpdates);
         }
-        String id = edEmail.getText().toString();
-        childUpdates.put(id.substring(0,id.indexOf("@")), postValues);
-        mPostReference.updateChildren(childUpdates);
+
     }
 
     private void createAccount(String email, String passwd) {

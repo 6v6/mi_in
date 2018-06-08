@@ -34,7 +34,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:ems="8"
-                android:hint="팀 회의"
+                android:hint="6시 가족 회의"
                 android:textSize="20dp" />
 
             <Button

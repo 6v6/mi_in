@@ -45,7 +45,7 @@
             android:layout_width="330dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="비밀번호(4자리이상)"
+            android:hint="비밀번호(6자리이상)"
             android:inputType="textPassword" />
 
         <EditText

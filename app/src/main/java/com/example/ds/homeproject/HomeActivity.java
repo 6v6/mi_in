@@ -86,7 +86,6 @@ public class HomeActivity extends FragmentActivity  {
         homeFragment = new HomeFragment();
         galFragment = new GalFragment();
         chatFragment = new ChatFragment();
-
         getSupportFragmentManager().beginTransaction().replace(R.id.contentContainer,homeFragment).commit();
 
         page=(LinearLayout) findViewById(R.id.page);

@@ -13,7 +13,7 @@ public class FirebasePost {
     public String email;
     public String code;
     public String role;
-    public String date, schedule;
+    public String date,schedule;
     public FirebasePost(){
         // Default constructor required for calls to DataSnapshot.getValue(FirebasePost.class)
     }
@@ -34,19 +34,18 @@ public class FirebasePost {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("name", name);
-        result.put("pw", pw);
-        result.put("email", email);
-        result.put("code", code);
-        result.put("role", role);
+        if(name!=null) {
+            result.put("name", name);
+            result.put("pw", pw);
+            result.put("email", email);
+            result.put("code", code);
+            result.put("role", role);
+        }
+        else{
+            result.put("date", date);
+            result.put("schedule", schedule);
+        }
         return result;
     }
 
-    @Exclude
-    public Map<String, Object> toDate() {
-        HashMap<String, Object> date = new HashMap<>();
-        date.put("date", date);
-        date.put("schedule", schedule);
-        return date;
-    }
 }
