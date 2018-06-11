@@ -6,13 +6,15 @@
     tools:context="com.example.ds.homeproject.HomeFragment">
 
     <Button
+        android:layout_margin="10dp"
         android:id="@+id/imageButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:background="@drawable/camera" />
 
-    <Button
+    <EditText
+        android:padding="10dp"
         android:id="@+id/notice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +26,6 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/family" />
+        />
 
 </FrameLayout>

@@ -1,9 +1,7 @@
 package com.example.ds.homeproject;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -285,7 +283,7 @@ public class HomeActivity extends FragmentActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==102 || resultCode == 100)
+        if(requestCode==102 || requestCode == 101)
             homeFragment.onActivityResult(requestCode, resultCode, data);
         else
             galFragment.onActivityResult(requestCode, resultCode, data);

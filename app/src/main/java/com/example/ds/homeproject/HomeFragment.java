@@ -21,6 +21,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import android.content.Intent;
@@ -38,6 +40,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -47,20 +50,18 @@ import android.widget.ProgressBar;
 public class HomeFragment extends Fragment {
 
 
-
     private FirebaseStorage storage;
-    private FirebaseAuth auth;
-    private  FirebaseDatabase db;
     private DatabaseReference myImage = FirebaseDatabase.getInstance().getReference("img_list");
 
     String name;
-    public static final String TAG ="HomeFragment";
-
+    public static final String TAG = "HomeFragment";
+    private DatabaseReference mPostReference =  FirebaseDatabase.getInstance().getReference("notice_list");
 
     public HomeFragment() {
         // Required empty public constructor
     }
-    Button notice;
+
+    EditText notice;
     Button imgBtn;
     ImageView imgV;
 
@@ -68,39 +69,53 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_home,container,false);
-        notice = (Button)rootView.findViewById(R.id.notice);
-        imgBtn = (Button)rootView.findViewById(R.id.imageButton);
-        imgV = (ImageView)rootView.findViewById(R.id.imageView);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_home, container, false);
+        notice = (EditText) rootView.findViewById(R.id.notice);
+        imgBtn = (Button) rootView.findViewById(R.id.imageButton);
+        imgV = (ImageView) rootView.findViewById(R.id.imageView);
 
-
-        myImage.child("home").addListenerForSingleValueEvent(new ValueEventListener() {
+        mPostReference.child("notice").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //for (DataSnapshot datas : dataSnapshot.getChildren()) {} 반복문
-                String getUri=dataSnapshot.getValue().toString();
-                String finalUri=getUri.substring(10,getUri.length());
-                Log.d(TAG, "homeUri:" + finalUri+"\n");
-
-                Glide.with(getActivity())
-                        .load(finalUri)
-                        .into(imgV);
+                notice.setText(dataSnapshot.getValue(String.class));
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
 
+     //설정한 배경화면 불러오기
+        myImage.child("home").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String getUri = dataSnapshot.getValue().toString();
+                String finalUri = getUri.substring(10, getUri.length());
+                Log.d(TAG, "homeUri:" + finalUri + "\n");
+
+                Glide.with(getActivity())
+                        .load(finalUri)
+                        .into(imgV);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+
         //권한
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},0);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         }
 
         notice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),NoticeActivity.class);
-                getActivity().startActivityForResult(intent,101);
+                Intent intent = new Intent(getActivity(), NoticeActivity.class);
+                getActivity().startActivityForResult(intent, 101);
             }
         });
 
@@ -109,23 +124,23 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
-                getActivity(). startActivityForResult(intent,102);
+                getActivity().startActivityForResult(intent, 102);
             }
         });
 
         return rootView;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        Uri UriFStorage = Uri.fromFile(new File(getPath(data.getData())));
-
-        if(requestCode==101)
+        if (requestCode == 101) {
             notice.setText(data.getExtras().getString("notice"));
+            mPostReference.child("notice").setValue(notice.getText().toString());
+        } else if (requestCode == 102) {
 
-        else if(requestCode==102) {
             try {
+                Uri UriFStorage = Uri.fromFile(new File(getPath(data.getData())));
                 if (resultCode == -1) {
 
                     //이미지 가져오기
@@ -139,11 +154,11 @@ public class HomeFragment extends Fragment {
                     imgV.setImageBitmap(selected);
                 }
                 //데베 저장소
-                storage=FirebaseStorage.getInstance();
+                storage = FirebaseStorage.getInstance();
 
                 //나의 데이터베이스 저장소 주소
                 StorageReference storageRef = storage.getReferenceFromUrl("gs://miin-2a596.appspot.com");
-                StorageReference riversRef = storageRef.child("HomeImages/"+UriFStorage.getLastPathSegment());
+                StorageReference riversRef = storageRef.child("HomeImages/" + UriFStorage.getLastPathSegment());
                 UploadTask uploadTask = riversRef.putFile(UriFStorage);
 
                 uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -158,9 +173,9 @@ public class HomeFragment extends Fragment {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                         // ...
                         @SuppressWarnings("VisibleForTests")
-                        Uri downloadUrI=taskSnapshot.getDownloadUrl();
-                        FirebasePost firebasePost=new FirebasePost();
-                        firebasePost.imageUrl=downloadUrI.toString();
+                        Uri downloadUrI = taskSnapshot.getDownloadUrl();
+                        FirebasePost firebasePost = new FirebasePost();
+                        firebasePost.imageUrl = downloadUrI.toString();
                         myImage.child("home").setValue(firebasePost);
 
 
@@ -172,13 +187,15 @@ public class HomeFragment extends Fragment {
         }
 
     }
+
     //getPath
-    public String getPath(Uri uri){
-        String [] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader cursorLoader = new CursorLoader(getActivity(),uri,proj,null,null,null);
-        Cursor cursor = cursorLoader.loadInBackground ();
-        int index = cursor.getColumnIndexOrThrow (MediaStore.Images.Media.DATA);
+    public String getPath(Uri uri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        CursorLoader cursorLoader = new CursorLoader(getActivity(), uri, proj, null, null, null);
+        Cursor cursor = cursorLoader.loadInBackground();
+        int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(index);
     }
+
 }
