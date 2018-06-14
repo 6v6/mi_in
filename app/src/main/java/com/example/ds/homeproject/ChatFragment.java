@@ -78,7 +78,6 @@ public class ChatFragment extends Fragment {
     }
 
     public void letterChaged(){
-        Log.d("14","name***"+name);
         letterReference.child(name).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

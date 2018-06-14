@@ -55,8 +55,7 @@ public class GalFragment extends Fragment {
     GridView gridView;
     Button photo;
     SingerAdapter adapter;
-    Bitmap bitmap;
-
+    int count = 1;
     private static final String TAG = "GalFragment";
     private static final int PICK_FROM_ALBUM = 1;
 
@@ -144,18 +143,11 @@ public class GalFragment extends Fragment {
     //사진 선택 후 저장
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
-
         GridView gridView2;
         gridView2 = (GridView) rootView.findViewById(R.id.gridView);
-
         UriFStorage = Uri.fromFile(new File(getPath(data.getData())));
-
         try {
             if (requestCode == PICK_FROM_ALBUM && resultCode == -1 && null != data) {
-
-
                 Uri uri = data.getData();
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
 
@@ -194,23 +186,15 @@ public class GalFragment extends Fragment {
             //나의 데이터베이스 저장소 주소
             StorageReference storageRef= storage.getReferenceFromUrl("gs://miin-2a596.appspot.com");
             riversRef = storageRef.child("GalleryImages/"+UriFStorage.getLastPathSegment());
-
             UploadTask uploadTask = riversRef.putFile(UriFStorage);
-
-
-
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                }
-
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
+                }}).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                     // ...
-                    @SuppressWarnings("VisibleForTests")
+                    Log.d("14","onSuccess 호출!!!");
                     Uri downloadUrI=taskSnapshot.getDownloadUrl();
                     postFirebaseDatabase(downloadUrI.toString());
                 }
@@ -232,10 +216,14 @@ public class GalFragment extends Fragment {
     }
 
     public void postFirebaseDatabase(String img){
-        String key = myImage.child("gallery").push().getKey();
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(  "gallery/" + key, img);
-        myImage.updateChildren(childUpdates);
+        if(count%2!=0) {
+            Log.d("14", "postFirebaseDatabase 호출!!!");
+            String key = myImage.child("gallery").push().getKey();
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("gallery/" + key, img);
+            myImage.updateChildren(childUpdates);
+        }
+        count++;
     }
 
 
