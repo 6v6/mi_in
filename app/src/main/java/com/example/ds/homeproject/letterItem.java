@@ -1,5 +1,5 @@
 package com.example.ds.homeproject;
-import android.graphics.Bitmap;
+
 
 public class letterItem {
     private String tv, letter;
@@ -9,7 +9,6 @@ public class letterItem {
             this.tv = "보낸 편지";
         else if(tv.substring(0,1).equals("r"))
             this.tv = "받은 편지";
-       // this.tv = tv;
         this.letter = letter;
     }
 

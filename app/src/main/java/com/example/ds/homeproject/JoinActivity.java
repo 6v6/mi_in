@@ -70,10 +70,16 @@ public class JoinActivity extends AppCompatActivity {
 
                 String createID = edEmail.getText().toString().trim();
                 String createPW = edPw.getText().toString().trim();
-                createAccount(createID,createPW);
-                postFirebaseDatabase(true);
+                if(edPw.getText().toString().length()<6)
+                {
+                    Toast.makeText(JoinActivity.this,"비밀번호를 6자 이상 해주세요!",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    createAccount(createID,createPW);
+                    postFirebaseDatabase(true);
+                    finish();
+                }
 
-                finish();
             }
          }
         );

@@ -2,10 +2,7 @@ package com.example.ds.homeproject;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -45,7 +42,6 @@ public class writeLetter extends AppCompatActivity {
         mPostR.child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //for (DataSnapshot datas : dataSnapshot.getChildren()) {} 반복문
                 sName = dataSnapshot.child("name").getValue(String.class);
             }
 

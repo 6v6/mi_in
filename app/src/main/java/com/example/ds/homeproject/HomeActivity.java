@@ -3,46 +3,28 @@ package com.example.ds.homeproject;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
-import com.roughike.bottombar.TabSelectionInterceptor;
-
-import static java.security.AccessController.getContext;
 
 public class HomeActivity extends FragmentActivity  {
-//implements NavigationView.OnNavigationItemSelectedListener
+
     private CalFragment calFragment;
     private HomeFragment homeFragment;
     private GalFragment galFragment;
@@ -58,7 +40,6 @@ public class HomeActivity extends FragmentActivity  {
 
 
     private ImageView imageView;
-   // private NavigationView page;
    private LinearLayout page;
 
     private TextView textEmail;
@@ -88,19 +69,6 @@ public class HomeActivity extends FragmentActivity  {
 
         page=(LinearLayout) findViewById(R.id.page);
 
-        /*//내 정보 프로필 이미지
-        page=(NavigationView)findViewById(R.id.page);
-        page.setNavigationItemSelectedListener(this);
-        View view=page.getHeaderView(0);
-        imageView=(ImageView)view.findViewById(R.id.pro);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog = imageDialog();
-                dialog.show();
-            }
-        });*/
-
         imageView=(ImageView)findViewById(R.id.pro);
         translationLeftAnim= AnimationUtils.loadAnimation(this, R.anim.translate_left);
         translationRightAnim= AnimationUtils.loadAnimation(this, R.anim.translate_right);
@@ -129,19 +97,10 @@ public class HomeActivity extends FragmentActivity  {
         myRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            //for (DataSnapshot datas : dataSnapshot.getChildren()) {} 반복문
             email=dataSnapshot.child("email").getValue(String.class);
             name=dataSnapshot.child("name").getValue(String.class);
             familyCode=dataSnapshot.child("code").getValue(String.class);
             role=dataSnapshot.child("role").getValue(String.class);
-
-
-
-           /* page=(NavigationView)findViewById(R.id.page);
-            View view=page.getHeaderView(0);
-
-            textName=(TextView)view.findViewById(R.id.name);
-            textEmail=(TextView)view.findViewById(R.id.email);*/
 
             textName=(TextView)findViewById(R.id.name);
             textEmail=(TextView)findViewById(R.id.email);
@@ -170,8 +129,6 @@ public class HomeActivity extends FragmentActivity  {
     });
 
 }
-
-
     public void onLogOut(View view) {
         auth.signOut();
         finish();
@@ -183,34 +140,6 @@ public class HomeActivity extends FragmentActivity  {
         Toast.makeText(this,"mi_in_5346",Toast.LENGTH_LONG).show();
     }
 
-    /*  @SuppressWarnings("StatementWithEmptyBody")
-
-      public boolean onNavigationItemSelected(MenuItem item) {
-          // Handle navigation view item clicks here.
-          auth=FirebaseAuth.getInstance();
-          int id = item.getItemId();
-          DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer);
-          if (id == R.id.ver) {
-              Toast.makeText(this,"v1.0",Toast.LENGTH_LONG).show();
-
-          } else if (id == R.id.myInfo) {
-
-          }
-          else if (id == R.id.close) {
-              drawer.closeDrawer(GravityCompat.END);
-          }
-          else if (id == R.id.logout) {
-          auth.signOut();
-              finish();
-            Intent intent=new Intent(getApplicationContext(),MainActivity.class);
-              startActivity(intent);
-
-
-         }
-
-          return true;
-      }
-  */
   private class SPAListener implements Animation.AnimationListener{
 
       @Override

@@ -1,15 +1,12 @@
 package com.example.ds.homeproject;
 
 import android.Manifest;
-
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,11 +16,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -41,9 +34,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+
 
 
 
@@ -77,7 +69,6 @@ public class HomeFragment extends Fragment {
         mPostReference.child("notice").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //for (DataSnapshot datas : dataSnapshot.getChildren()) {} 반복문
                 notice.setText(dataSnapshot.getValue(String.class));
             }
 

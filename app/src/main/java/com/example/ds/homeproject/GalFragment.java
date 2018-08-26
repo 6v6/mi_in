@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 
-
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
 
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -255,11 +252,6 @@ public class GalFragment extends Fragment {
             SingerItemView view = new SingerItemView(getActivity());
             singerItem item = items.get(position);
             view.setImage(item.getImage());
-
-       /*     int numColumns = gridView.getNumColumns();
-            int rowIndex = position / numColumns;
-            int columnIndex = position % numColumns;*/
-
             return view;
         }
     }

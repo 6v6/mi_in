@@ -21,8 +21,7 @@ public class FirebasePost {
 
     //이미지
     public String imageUrl;
-    public String userEmail;
-    public String userName;
+
 
 
     public FirebasePost(){
